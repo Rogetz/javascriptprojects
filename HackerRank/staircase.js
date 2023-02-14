@@ -13,9 +13,10 @@ function staircaseCreator(inputValue){
             else{
                 let singleArray = ["*"];
                 // just learnt from python about the array concatenation and am using the same concept over here.
-                singleStep += singleArray;
+                singleStep += singleArray;// the moment you concatenate them as this, its no longer an array, so you cant use the forEach inbuilt method of arrays
             }
         }
+        console.log("Single text is : "+singleStep+"remeber that single step aint an array because of concatenation")
         changingLimit -= 1;
         staircase.push(singleStep);
     }

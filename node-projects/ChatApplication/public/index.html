@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Application</title>
+    <link rel="stylesheet" href="stylesheets/index.css">
+</head>
+<body>
+    <header>
+        <h1 class="chart-title">RogetzTech Chat App</h1>
+    </header>
+    <div class="main">
+        <!--Room headers-->
+        <div class="room-header"><span class="room-dec">room</span><span class="room-name"></span></div>
+        <!--Chat area with the rooms list beside it-->
+        <div class="chat-area-wrapper">
+            <div class="chat-area"></div><div class="rooms-list"></div>
+        </div>
+        <!--The input div with the send option. No need for a form sockets used.-->
+        <div class="input-div">
+            <input type="text" name="command-input" class="input-command" id="">
+            <button class="submit-btn">Submit</button>
+        </div>
+        <!--The commands help section-->
+        <div class="chat-commands">Chat commands
+            <li class="chat-item">Change Nickname: /nick (username)</li>
+            <li class="chat-item">join or create room  /join (room name) </li>
+        </div>
+
+    </div>
+    <!--The frontend socket.io is required for proper working of the frontend io functions-->
+    <!--I have not placed the relative path directly for some reason.-->
+    <script src="node_modules\socket.io\client-dist\socket.io.js"></script>s
+    <script type="text/javaScript" src=".\javascript\SocketClient.js" ></script>
+</body>
+</html>
