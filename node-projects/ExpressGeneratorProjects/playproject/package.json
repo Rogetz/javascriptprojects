@@ -1,0 +1,14 @@
+{
+  "name": "playproject",
+  "version": "1.0.0",
+  "description": "my test for the order of execution between the express's  use and get method",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ronny Ogeta",
+  "license": "ISC",
+  "dependencies": {
+    "express-session": "^1.17.3"
+  }
+}

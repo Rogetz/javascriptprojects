@@ -1,0 +1,14 @@
+<!--
+<% if(locals.message){ %>
+    <h1><%= message %></h1>
+    <h2><%= error.status %></h2>        
+<%}%>
+
+-->
+<!--do note the difference in plural between the first locals message and the second locals.message-->
+
+<% if(locals.messages){ %>
+    <h1><%= messages %></h1>
+<%}%>
+<!--This above here is my simplified version of a response, I'll create more complicated ones as I get used to them
+also do note that you need to always define the removeMessages method-->

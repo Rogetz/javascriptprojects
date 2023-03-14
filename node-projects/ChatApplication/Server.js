@@ -5,6 +5,10 @@ var http = require("http")// for creating the server
 var fs = require("fs")// for reading and writing to the files and directories.
 var path = require('path')// for joining different paths.
 const SocketServer = require(path.join(__dirname,"SocketServer.js"))// for my own created socket Server.
+
+// importing an object constructor from a module finally worked.
+// remember that since I only had one constructor class immported using module.exports I can simply reffer to the object directly from the 
+// imported module without using a dotnotation, since remeber it's merely impossible to create a new instance of an object through a dot notation like new watcher.Watcher("Paul"), that would never work since the module name is not an object constructor in itself.
 const watcher = require(path.join(__dirname,"WatcherProgramm.js"))
 
 
@@ -27,7 +31,10 @@ function pageServer(request,response){
     // I've used module.exports, so I don't need to use the dot notation, I call the function directly.
     /*let watchInstance = new watch(abspath,response)
     watchInstance.start()*/
-    watcher.starter(abspath,response)
+    // finally importing the module worked.
+    let watcherInstance = new watcher(abspath,response);
+    watcherInstance.start()
+    //watcher.starter(abspath,response)
     // I'll try adding the watcher here and see if it can work with the readingFiles method in this class.
 }
 function readingFiles(abspath,request,response){
