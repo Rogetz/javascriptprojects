@@ -6,9 +6,11 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+
 // I added these
 const session = require("express-session")
 const flash = require("connect-flash")
+const passport = require("passport")
 
 // routers
 var indexRouter = require('./routes/index');
@@ -17,6 +19,9 @@ var flashRouter = require("./routes/flash")
 
 //lib models
 var booksMessage = require("./lib/booksMessage")
+var user = require("./lib/user");
+var basicAuth = require("./lib/basicAuth")
+const { text } = require('express');
 
 process.env.PORT = 5008 
 
@@ -26,6 +31,7 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+//app.use(basicAuth.myBasicAuth)// It was initially causing errors since I called a function in the same method with a default exports, avoid using another exports where theres a default module.exports
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -38,14 +44,23 @@ app.use(session({
   saveUninitialized: false,
   resave: false
 }))
+// These passport middleware must be used after the session has been created.
+/*app.use(passport.initialize())
+app.use(passport.session())// sets a req.user object that can be used to access the details of the current user.
+// One note is that sessions are not required in api requests, since for each API there needs  to be en authentication header.
+*/
+
 app.use(flash()) // added the fkash middleware after the session since its dependent of it.
-/*app.use(function(req,res,next){
+app.use(function(req,res,next){
+  // I have pointed the res.locals.message to point to the req.flash method.
+  // I've pointed the res.locals.message here.
   res.locals.message = req.flash()
-  // didn't work by setting it outside here.
-  // Ignore my initial statement
   next()
-})*/
+})
+// express basic authentication was deprecated so I need to validate it myself in the middleware am using
+//app.use(express.basicAuth())
 /*
+app.use(express.b
 app.use(function(req,res,next){
   req.flash("Test","This is my message")
   // kumbe the res.locals can be set outside the exaxt place where the actual flash is set
@@ -54,7 +69,6 @@ app.use(function(req,res,next){
 })*/
 
 app.use(express.static(path.join(__dirname, 'public')));
-
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
@@ -74,7 +88,19 @@ app.use("/home",function(req,res,next){
   res.render("index",{title : "index"})
 })
 app.get("/flashTest",flashRouter)
-
+app.get("/test",function(req,res,next){
+  // I have pointed the res.locals.message to point to the req.flash method.
+  // set the res.locals to the req.flash method while in the redirected router
+  //res.locals.message = req.flash()
+  res.render("test")
+})
+// tested the css part with thiis and it perfectly workde
+app.get("/flash",function(req,res,next){
+  res.render("flash")
+})
+app.get("/mine",function(req,res,next){
+  res.render("mine")
+})
 // worked well except for the redirect. since there am in dilemma of whether it should be kept before or after the redirect.
 /*this is mine, workde very well.
 app.use("/home",function(req,res,next){
@@ -99,9 +125,30 @@ app.use("/home",function(req,res,next){
 app.use(booksMessage)
 */
 
+// to create a post request in curl use this parameter
+//curl -d "name=Tommy&&class=form three"
+
+/*fot testing the different styles of setting api routes*/
+app.post("/api/addOne",function(req,res,next){
+  // The req.body object is there but then there's no actual body parser for setting each element in the body respectively
+  console.log(typeof(req.body))
+  //console.log(typeof(testName))
+  res.send("The name is "+req.body.name+" and the class is "+req.body.class)
+})
+app.get("/api/:id",function(req,res,next){
+  res.send("reached the :page")
+})
+app.get("/api/:page?",function(req,res,next){
+  res.send("reached the :page?")
+})
+
+app.get("/api/page/mine",function(req,res,next){
+  res.send("reached the mine api")
+})
+
 //  Here I created a dubed error for the sake of testing the 505 erroe handling of mine.
 app.use("/errorTest",function(req,res,next){
-  let error = new Error("I created this error")
+  let error = new Error("I created this error") // also do remeber that whatever error  that is encountered, it will be redirected to our error handler asctually error handlers are the only middleware types accepting four parameters. below
   next(error)
 })
 
@@ -144,7 +191,7 @@ app.use(function(error,req,res,next){
       res.render("my505")
     },
     Json : function(){
-      res.send({505 : "Internal server error we'll be back"})
+      res.send({505 : "Internal server error we'll be back",error : error.message})
     },
     xml : function(){
       res.write("<error>\n")

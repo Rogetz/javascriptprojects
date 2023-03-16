@@ -12,10 +12,16 @@ let numberSchema = new mongoose.Schema({
 let userSchema = new mongoose.Schema({
     userId : Number,
     name : String,
-    pass : String
+    pass : String,
+    salt : String
 })
-let userModel = mongoose.model("User",userSchema)
-
+let userModel = mongoose.model("UserUpdated",userSchema)
+// get used to0 naming functions e.g function() modelSearcher
+// also note since this has a default export, this method has been exported as an attribute of the user model
+user.userModelSearcher =  async function modelSearcher(username,fn){
+    let documentsReturned = await userModel.find({name : username})
+    fn(documentsReturned)    
+}
 
 let numberModel =  mongoose.model("IdCountCollection",numberSchema)
 // am trying to save this documnet once so that all I'll be doin in the subsequent method is simple updates.
@@ -55,6 +61,9 @@ async function numberFindResponse(){
     }
 }
 numberFindResponse()// for saving the first number document.
+
+
+module.exports = user;
 
 function user(user){
     for(var key in user){
@@ -129,7 +138,7 @@ user.prototype.save = async function(fn){
                 else{
                     // while using the callbacks you dont have to await a function, since javascript in itself is asynchronous.
                     user.generateId(function(error,id){
-                        let newUser = new userModel({userId : id,name: user.name,pass: passwordGenerated})
+                        let newUser = new userModel({userId : id,name: user.name,pass: passwordGenerated, salt: user.salt})
                         console.log("users password is :"+passwordGenerated)
                         console.log(id)
                         newUser.save()
@@ -145,6 +154,7 @@ user.prototype.save = async function(fn){
 user.prototype.hashpassword = async function(fn){
     let user = this
     let salt = await bcrypt.genSalt(12)
+    user.salt = salt
     bcrypt.hash(user.pass,salt,function(error,hash){
         if(error){
             console.log("error found during hashing, I have kept an error handler now")
@@ -179,7 +189,7 @@ user.prototype.generateId = async function(fn){
     //console.log(user.id)
     fn(null,returnedObject.numberOfIds) // return so that I can view it
 }
-let myUser = new user({name:"Tommy",pass:"breezy58"})
+let myUser = new user({name:"Paul",pass:"test85"})
 myUser.save(function(error,name){
     if(error){
         console.log("error observed and caught sucessfuly")
@@ -188,6 +198,22 @@ myUser.save(function(error,name){
         console.log(name+" has been registered successfully")
     }
 })
+
+// user authentication, designed in a way to work with any type of middleware.
+// must accept three parameters, the username, password and callback
+// also note that this authentication method 
+// also note that I didn't use a prototype here I caled it as an attribute
+
+// try see if I can access it by only imrorting the overall user class.
+
+
+// passwordParser
+// so I had to import this separately since it doesn't associate itself with the user class
+// also kumbe I can still export even if the module.exports has been used somewhere
+
+
+
+
 
 
 // This below was a test.
