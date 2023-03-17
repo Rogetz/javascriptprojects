@@ -1,0 +1,4 @@
+./node-modules
+.env
+
+/*Here I have kept like the basic files but later I'll take the gitignore.io site's configuration*/

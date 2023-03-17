@@ -11,6 +11,11 @@ var logger = require('morgan');
 const session = require("express-session")
 const flash = require("connect-flash")
 const passport = require("passport")
+const localStrategy = require("passport-local").Strategy
+// dotenv module simply makes the .env variable available in the process.env attribute // actually I dont need to save the results of requiring the module
+const dotnev = require("dotenv").config()
+// worked perfectly fine
+console.log(process.env.MY_TEST_VARIABLE)
 
 // routers
 var indexRouter = require('./routes/index');
